@@ -8,14 +8,14 @@ const public_users = express.Router();
 public_users.post("/register", (req, res) => {
     const { username, password } = req.body
     if (!username || !password)
-    return res.status(400).send ('username o password no proporcionado')
+    return res.status(400).json ({ message:'username o password no proporcionado'})
 
     const existingUser = users.find(
         (user) => user.username === username
     );
 
     if (existingUser)
-    return res.status(400).send ('Este usuario ya existe')
+    return res.status(400).json ({ message:'Este usuario ya existe'})
 
     const user = {
         username,
@@ -24,7 +24,7 @@ public_users.post("/register", (req, res) => {
 
     users.push(user)
 
-    return res.status(200).send('User Register');
+    return res.status(200).json ({ message:'User Register'})
 });
 
 // Get the book list available in the shop
