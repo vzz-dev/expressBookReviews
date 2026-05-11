@@ -9,14 +9,14 @@ const axios = require('axios');
 public_users.post("/register", (req, res) => {
     const { username, password } = req.body
     if (!username || !password)
-    return res.status(400).json ({ message:'username o password no proporcionado'})
+        return res.status(400).json({ message: 'username o password no proporcionado' })
 
     const existingUser = users.find(
         (user) => user.username === username
     );
 
     if (existingUser)
-    return res.status(400).json ({ message:'Este usuario ya existe'})
+        return res.status(400).json({ message: 'Este usuario ya existe' })
 
     const user = {
         username,
@@ -25,7 +25,7 @@ public_users.post("/register", (req, res) => {
 
     users.push(user)
 
-    return res.status(200).json ({ message:'User Register'})
+    return res.status(200).json({ message: 'User Register' })
 });
 
 // Get the book list available in the shop
@@ -36,23 +36,29 @@ public_users.get('/', async function (req, res) {
         });
         return res.status(200).json(resBook);
     } catch (error) {
-        return res.status(500).json({message: "Error getting books"})
+        return res.status(500).json({ message: "Error getting books" })
     }
 });
-    
+
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
-    const isbn = req.params.isbn
-    const findBook = books[isbn]
+public_users.get('/isbn/:isbn', async function (req, res) {
+    try {
+        const isbn = req.params.isbn
 
-    if (!findBook) {
-        return res.status(404).json({
-            message: "Book not found"
-        })
+        const findBook = await new Promise((resolve, reject) => {
+
+            const book = books[isbn]
+            if (book) {
+                resolve(book)
+            } else {
+                reject(new Error("Book not found"))
+            }
+        });
+        return res.status(200).json(findBook);
+    } catch (error) {
+        return res.status(404).json({ message: error.message })
     }
-
-    res.status(200).json(findBook);
 });
 
 // Get book details based on author
@@ -95,7 +101,7 @@ public_users.get('/review/:isbn', function (req, res) {
     const findBook = books[isbn]
 
     if (!findBook)
-        return res.status(404).send ('Book not found')
+        return res.status(404).send('Book not found')
 
     const findReview = books[isbn].reviews
 
