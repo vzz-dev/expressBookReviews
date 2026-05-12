@@ -86,19 +86,26 @@ public_users.get('/author/:author', async function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
-    const keys = Object.keys(books)
+public_users.get('/title/:title', async function (req, res) {
+
     const title = req.params.title
 
-    const findBook = keys.find(
-        (key) => books[key].title === title
-    );
+    try { 
+        const axiosResponse = await axios.get(`http://localhost:5000/`);
+        const result = axiosResponse.data;
+        const allBooks = Object.values(result);
 
-    if (!findBook)
-        return res.status(404).send('Book not found')
+        const findTitle = allBooks.filter(book => book.title === title);
 
-    const bookFound = books[findBook]
-    return res.status(200).json(bookFound);
+        if (findTitle.length === 0) {
+            return res.status(404).json({message: "Not found title"})
+        }
+
+        return res.status(200).json(findTitle)
+ 
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
 });
 
 //  Get book review
