@@ -25,7 +25,7 @@ public_users.post("/register", (req, res) => {
 
     users.push(user)
 
-    return res.status(200).json({ message: 'User Register' })
+    return res.status(200).json({ message: "User successfully registered" })
 });
 
 // Get the book list available in the shop

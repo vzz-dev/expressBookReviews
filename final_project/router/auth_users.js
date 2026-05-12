@@ -36,7 +36,7 @@ regd_users.post("/login", (req,res) => {
         { expiresIn: "2h" }
     );
     req.session.authorization = { accessToken: token }
-    return res.json({token});
+    return res.json({message: "Login successful", token});
 });
 
 
